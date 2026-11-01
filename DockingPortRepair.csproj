@@ -1,0 +1,55 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <AssemblyName>DockingPortRepair</AssemblyName>
+    <RootNamespace>DockingPortRepair</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Version>0.3.0</Version>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+
+    <!-- Папка с игрой. Можно переопределить: dotnet build -p:KSPDir="D:\Games\KSP" -->
+    <KSPDir Condition="'$(KSPDir)' == ''">C:\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program</KSPDir>
+    <KSPManaged>$(KSPDir)\KSP_x64_Data\Managed</KSPManaged>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(KSPManaged)\Assembly-CSharp.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>$(KSPManaged)\Assembly-CSharp-firstpass.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>$(KSPManaged)\UnityEngine.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(KSPManaged)\UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>$(KSPManaged)\UnityEngine.PhysicsModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.IMGUIModule">
+      <HintPath>$(KSPManaged)\UnityEngine.IMGUIModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.InputLegacyModule">
+      <HintPath>$(KSPManaged)\UnityEngine.InputLegacyModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- После сборки копируем плагин и конфиг прямо в GameData. -->
+  <Target Name="CopyToGameData" AfterTargets="Build" Condition="Exists('$(KSPDir)\GameData')">
+    <MakeDir Directories="$(KSPDir)\GameData\DockingPortRepair\Plugins" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(KSPDir)\GameData\DockingPortRepair\Plugins" />
+    <Copy SourceFiles="DockingPortRepair.cfg" DestinationFolder="$(KSPDir)\GameData\DockingPortRepair" />
+  </Target>
+
+</Project>

@@ -1,0 +1,9 @@
+C:\KSPMod\bin\Release\DockingPortRepair.dll
+C:\KSPMod\bin\Release\DockingPortRepair.pdb
+C:\KSPMod\obj\Release\DockingPortRepair.csproj.AssemblyReference.cache
+C:\KSPMod\obj\Release\DockingPortRepair.GeneratedMSBuildEditorConfig.editorconfig
+C:\KSPMod\obj\Release\DockingPortRepair.AssemblyInfoInputs.cache
+C:\KSPMod\obj\Release\DockingPortRepair.AssemblyInfo.cs
+C:\KSPMod\obj\Release\DockingPortRepair.csproj.CoreCompileInputs.cache
+C:\KSPMod\obj\Release\DockingPortRepair.dll
+C:\KSPMod\obj\Release\DockingPortRepair.pdb
