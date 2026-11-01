@@ -420,11 +420,11 @@
   "project": {
     "version": "0.3.0",
     "restore": {
-      "projectUniqueName": "C:\\KSPMod\\DockingPortRepair.csproj",
+      "projectUniqueName": "C:\\Users\\Acer\\OneDrive\\Рабочий стол\\Project`s\\My personsl hell\\FixDP\\DockingPortRepair.csproj",
       "projectName": "DockingPortRepair",
-      "projectPath": "C:\\KSPMod\\DockingPortRepair.csproj",
+      "projectPath": "C:\\Users\\Acer\\OneDrive\\Рабочий стол\\Project`s\\My personsl hell\\FixDP\\DockingPortRepair.csproj",
       "packagesPath": "C:\\Users\\Acer\\.nuget\\packages\\",
-      "outputPath": "C:\\KSPMod\\obj\\",
+      "outputPath": "C:\\Users\\Acer\\OneDrive\\Рабочий стол\\Project`s\\My personsl hell\\FixDP\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Acer\\AppData\\Roaming\\NuGet\\NuGet.Config"
