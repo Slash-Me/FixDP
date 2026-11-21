@@ -50,6 +50,10 @@
     <MakeDir Directories="$(KSPDir)\GameData\DockingPortRepair\Plugins" />
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(KSPDir)\GameData\DockingPortRepair\Plugins" />
     <Copy SourceFiles="DockingPortRepair.cfg" DestinationFolder="$(KSPDir)\GameData\DockingPortRepair" />
+    <ItemGroup>
+      <LocFiles Include="Localization\*.cfg" />
+    </ItemGroup>
+    <Copy SourceFiles="@(LocFiles)" DestinationFolder="$(KSPDir)\GameData\DockingPortRepair\Localization" />
   </Target>
 
 </Project>

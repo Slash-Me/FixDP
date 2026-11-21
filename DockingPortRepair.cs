@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using KSP.Localization;
 using UnityEngine;
 
 namespace DockingPortRepair
@@ -27,7 +28,7 @@ namespace DockingPortRepair
         /// <summary>Показывать в меню детали строку диагностики «Починка порта».</summary>
         [KSPField] public bool debugStatus = true;
 
-        [KSPField(guiActive = true, guiActiveUnfocused = true, unfocusedRange = 3f, guiName = "Починка порта")]
+        [KSPField(guiActive = true, guiActiveUnfocused = true, unfocusedRange = 3f, guiName = "#FixDP_StatusField")]
         public string status = "";
 
         private const float CheckInterval = 0.5f;
@@ -75,7 +76,7 @@ namespace DockingPortRepair
             catch (Exception e)
             {
                 LogErrorOnce(e);
-                info = "ошибка, см. KSP.log";
+                info = RepairCore.L("#FixDP_InfoError");
             }
 
             status = info;
@@ -95,7 +96,7 @@ namespace DockingPortRepair
         }
 
         [KSPEvent(guiActive = true, guiActiveUnfocused = true, unfocusedRange = 3f,
-                  guiName = "Принудительная расстыковка", active = false)]
+                  guiName = "#FixDP_ForceUndock", active = false)]
         public void ForceUndock()
         {
             try
@@ -104,7 +105,7 @@ namespace DockingPortRepair
                 if (Time.time > armedUntil)
                 {
                     armedUntil = Time.time + ConfirmWindow;
-                    RepairCore.Msg("Нажмите «Принудительная расстыковка» ещё раз в течение 5 с для подтверждения.");
+                    RepairCore.Msg(RepairCore.L("#FixDP_ConfirmHint"));
                     return;
                 }
                 armedUntil = 0f;
@@ -112,17 +113,17 @@ namespace DockingPortRepair
                 ModuleDockingNode other = RepairCore.FindPartner(node);
                 if (other == null)
                 {
-                    RepairCore.Msg("Парный стыковочный порт не найден.");
+                    RepairCore.Msg(RepairCore.L("#FixDP_NoPartner"));
                     return;
                 }
 
                 string error = RepairCore.ForceUndock(node, other, separationSpeed, reEngageDistance);
-                RepairCore.Msg(error ?? "Порты расстыкованы. Отлетите на пару метров, и они снова смогут стыковаться.");
+                RepairCore.Msg(error ?? RepairCore.L("#FixDP_Undocked"));
             }
             catch (Exception e)
             {
                 LogErrorOnce(e);
-                RepairCore.Msg("Ошибка принудительной расстыковки. Подробности в KSP.log.");
+                RepairCore.Msg(RepairCore.L("#FixDP_UndockError"));
             }
         }
 
@@ -141,6 +142,12 @@ namespace DockingPortRepair
     internal static class RepairCore
     {
         public const string Tag = "[DockingPortRepair] ";
+
+        /// <summary>Локализованная строка (ключи в GameData/FixDP/Localization).</summary>
+        public static string L(string key, params object[] args)
+        {
+            return args != null && args.Length > 0 ? Localizer.Format(key, args) : Localizer.Format(key);
+        }
         public const float DefaultSeparationSpeed = 0.3f;
         public const float DefaultReEngageDistance = 3f;
         private const float MaxWaitSeconds = 300f;
@@ -213,7 +220,7 @@ namespace DockingPortRepair
 
             if (!DockingAccess.Available)
             {
-                info = "нет доступа к полям порта";
+                info = RepairCore.L("#FixDP_InfoNoAccess");
                 return false;
             }
 
@@ -221,7 +228,7 @@ namespace DockingPortRepair
             other = FindPartner(node);
             if (other == null)
             {
-                info = "парный порт не найден (порт: " + a + ")";
+                info = RepairCore.L("#FixDP_InfoNoPartner", a);
                 return false;
             }
 
@@ -247,7 +254,7 @@ namespace DockingPortRepair
         {
             for (int i = 0; i < Pending.Count; i++)
                 if ((Pending[i].A == a && Pending[i].B == b) || (Pending[i].A == b && Pending[i].B == a))
-                    return "Эта пара уже расстыкована, подождите.";
+                    return L("#FixDP_AlreadyUndocked");
 
             Part child;
             Part keep;
@@ -263,7 +270,7 @@ namespace DockingPortRepair
             }
             else
             {
-                return "Порты не соединены напрямую, расстыковка отменена.";
+                return L("#FixDP_NotDirect");
             }
 
             Debug.Log(Tag + "принудительная расстыковка: " + keep.partInfo.name + " <-> " + child.partInfo.name);
@@ -404,7 +411,7 @@ namespace DockingPortRepair
         {
             Rearm(p.A, p.SavedA);
             Rearm(p.B, p.SavedB);
-            Msg("Порты снова готовы к стыковке.");
+            Msg(L("#FixDP_Rearmed"));
         }
 
         private static void Rearm(ModuleDockingNode n, float[] savedCapture)
@@ -478,12 +485,12 @@ namespace DockingPortRepair
                 try
                 {
                     string error = RepairCore.ForceUndock(r.A, r.B, RepairCore.DefaultSeparationSpeed, RepairCore.DefaultReEngageDistance);
-                    RepairCore.Msg(error ?? "Порты расстыкованы. Отлетите на пару метров, и они снова смогут стыковаться.");
+                    RepairCore.Msg(error ?? RepairCore.L("#FixDP_Undocked"));
                 }
                 catch (Exception e)
                 {
                     Debug.LogError(RepairCore.Tag + e);
-                    RepairCore.Msg("Ошибка принудительной расстыковки. Подробности в KSP.log.");
+                    RepairCore.Msg(RepairCore.L("#FixDP_UndockError"));
                 }
                 nextPairScan = 0f;
             }
@@ -573,17 +580,17 @@ namespace DockingPortRepair
         {
             if (!showWindow) return;
             GUI.skin = HighLogic.Skin;
-            windowRect = GUILayout.Window(WindowId, windowRect, DrawWindow, "Починка стыковочных портов");
+            windowRect = GUILayout.Window(WindowId, windowRect, DrawWindow, RepairCore.L("#FixDP_WindowTitle"));
         }
 
         private void DrawWindow(int id)
         {
-            GUILayout.Label("Пары соединённых стыковочных портов на активном аппарате:");
+            GUILayout.Label(RepairCore.L("#FixDP_WindowHeader"));
 
             scroll = GUILayout.BeginScrollView(scroll, GUILayout.Height(280f));
 
             if (pairs.Count == 0)
-                GUILayout.Label("Пар не найдено.");
+                GUILayout.Label(RepairCore.L("#FixDP_NoPairs"));
 
             for (int i = 0; i < pairs.Count; i++)
             {
@@ -595,7 +602,7 @@ namespace DockingPortRepair
                 if (pi.CanForce)
                 {
                     bool armed = armedKey == pi.Key && Time.time < armedUntil;
-                    string label = armed ? "Нажмите ещё раз для подтверждения" : "Принудительная расстыковка";
+                    string label = armed ? RepairCore.L("#FixDP_ConfirmShort") : RepairCore.L("#FixDP_ForceUndock");
                     if (GUILayout.Button(label))
                     {
                         if (armed)
@@ -612,14 +619,14 @@ namespace DockingPortRepair
                 }
                 else
                 {
-                    GUILayout.Label("(собрано в редакторе или стыковка «сам с собой» — не трогаю)");
+                    GUILayout.Label(RepairCore.L("#FixDP_NotApplicable"));
                 }
                 GUILayout.EndVertical();
             }
 
             GUILayout.EndScrollView();
 
-            if (GUILayout.Button("Закрыть"))
+            if (GUILayout.Button(RepairCore.L("#FixDP_Close")))
                 showWindow = false;
 
             GUI.DragWindow();
